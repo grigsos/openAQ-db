@@ -24,17 +24,19 @@ def calculate_weighted_average(readings: List[float], timestamps: List[datetime]
     elif len(recent_readings) == 1:
         return recent_readings[0], recent_datetimes, recent_readings
     else:
-        total_weight = 0.0
-        weighted_total = 0.0
-        for i in range(1, len(recent_datetimes)):
-            dt = recent_datetimes[i] - recent_datetimes[i-1]
-            weight = dt.total_seconds()
+        total_weight = 0
+        weighted_sum = 0
+    
+        # Calculate the weighted average over the past x hours
+        for i in range(len(recent_datetimes)-1, -1, -1):
+            time_diff = datetime.now() - recent_datetimes[i]
+    
+            weight = 1 / time_diff.total_seconds()  # Use inverse time difference as weight
             total_weight += weight
-            weighted_total += weight * (float(recent_readings[i]))
+            weighted_sum += weight * recent_readings[i]
 
-        
         try:
-            avg = weighted_total / total_weight
+            avg = weighted_sum / total_weight
         except ZeroDivisionError:
             avg = 0  
             
