@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union, Tuple
+import pytz
 
 from constants import HOURS_THRESHOLD
 
@@ -26,25 +27,32 @@ def calculate_weighted_average(readings: List[float], timestamps: List[datetime]
     else:
         total_weight = 0
         weighted_sum = 0
+        
+        print(recent_datetimes)
     
         # Calculate the weighted average over the past x hours
         for i in range(len(recent_datetimes)-1, -1, -1):
-            time_diff = datetime.now() - recent_datetimes[i]
+            tz = pytz.timezone('UTC')  # create a timezone object with UTC offset
+            recent_datetime_with_tz = tz.localize(recent_datetimes[i])  # add timezone information to datetime object
+            time_diff = datetime.datetime.now(datetime.timezone.utc) - recent_datetime_with_tz
     
             weight = 1 / time_diff.total_seconds()  # Use inverse time difference as weight
             total_weight += weight
             weighted_sum += weight * recent_readings[i]
-
+    
         try:
             avg = weighted_sum / total_weight
         except ZeroDivisionError:
             avg = 0  
-            
-            
+        
         return round(avg, 3), recent_datetimes, recent_readings
+            
 
 
 def get_recent_datetimes(datetime_list: List[datetime], readings_list: List[float]) -> Tuple[List[datetime], List[float]]:
+    
+    print(datetime_list)
+    print(readings_list)
     now = datetime.now()
     recent_datetimes = []
     recent_readings = []

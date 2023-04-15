@@ -41,8 +41,10 @@ def put_data_to_dynamodb(responseAPI: Dict[str, Any]) -> Dict[str, Any]:
                 last_timestamp : datetime.datetime = lTimestampsResponse[-1]
                 
                 
+                
                 if str(last_timestamp) != str(datetime.strptime(param['lastUpdated'], '%Y-%m-%dT%H:%M:%S%z')): # need to update
-                    lTimestampsResponse.append(last_timestamp)
+                    print("added")
+                    lTimestampsResponse.append(datetime.strptime(param['lastUpdated'], '%Y-%m-%dT%H:%M:%S%z'))
                     last_reading : float = float(param['lastValue'])
                     lReadingsResponse.append(last_reading)
                 up_av,up_lt,up_lr = calculate_weighted_average(lReadingsResponse,lTimestampsResponse)
@@ -51,7 +53,6 @@ def put_data_to_dynamodb(responseAPI: Dict[str, Any]) -> Dict[str, Any]:
                     write_requests.append({'DeleteRequest': {'Key': key}})
                 else:
                     up_ltISO = convert_datetime_to_iso(up_lt)
-                    
                     item = {
                         PARTITION_KEY: {'N': str(param['id'])},
                         'name_provider' :response['Item']['name_provider'],
