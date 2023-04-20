@@ -1,6 +1,6 @@
-
 # lamba-interview
- 
+https://github.com/grigsos/openAQ-db-visiualisation
+
 Change the environmental to your option
 
  - TABLE_NAME: str = os.environ.get('dynamoDB_TABLE_NAME')
